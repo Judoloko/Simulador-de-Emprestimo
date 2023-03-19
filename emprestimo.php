@@ -1,36 +1,51 @@
 <?php
 
+// Recebe os dados do fórmulario 
 $nome = $_POST['nome'];
 $cliente = $_POST['cliente'];
 $serasa = intval($_POST['serasa']);
 $parcelas = intval($_POST['parcelas']);
-$seguro = $_POST['seguro'];
+$seguro = $_POST['seguro'] ?? "nao";
 $emprestimo = floatval($_POST['emprestimo']);
 
-$taxa_juros = 4;
+$taxa_juros = 3;
 $tarifa = 0;
 
+// Se não for cliente entra na condição 
 if ($cliente === 'nao') {
     $tarifa = 35;
 
-    if ($serasa >= 700) {
+    if (($serasa >= 700) and ($serasa <= 1000)){
         $taxa_juros = 5;
     }
-    elseif ($serasa >= 500) {
+    elseif (($serasa >= 500) and ($serasa <= 699)){
         $taxa_juros = 10;
     }
-    elseif ($serasa >= 300) {
+    elseif (($serasa >= 300) and ($serasa <= 499)){
         $taxa_juros = 15;
     }
     else {
         $taxa_juros = 20;
     }
+
+}
+// Calculando o imposto iof
+$imposto_iof = $emprestimo * 0.38;
+
+    
+// Atribuindo seguro desemprego ou não    
+if ($seguro == "sim"){
+    $seguro = 49.90;
+}   
+else{
+    $seguro = 0;
 }
 
-$imposto_iof = $emprestimo * 0.38;
-$seguro_desemprego = ($seguro === "sim") ? $emprestimo * 3.5 : 0;
+// Calculando parcelas
 $custo_parcela_com_juros = ($emprestimo / $parcelas * (1 + $taxa_juros / 100));
-$custo_efetivo_total = $custo_parcela_com_juros * $parcelas + $tarifa + $imposto_iof + $seguro_desemprego;
+
+// Calculando custo efetivo total
+$custo_efetivo_total = ($custo_parcela_com_juros * $parcelas) + $imposto_iof + $seguro;
 
 ?>
 
@@ -41,7 +56,7 @@ $custo_efetivo_total = $custo_parcela_com_juros * $parcelas + $tarifa + $imposto
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado do Simulador de Empréstimo</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main>
